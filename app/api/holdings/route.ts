@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
     timezone: subscriber.timezone,
     sendTime: subscriber.sendTime,
     wantsUrgentAlerts: subscriber.wantsUrgentAlerts,
-    holdings: subscriber.holdings.map((h) => ({
+    holdings: subscriber.holdings.map((h: { ticker: string; weightPct: number | null }) => ({
       ticker: h.ticker,
       weightPct: h.weightPct,
     })),
