@@ -1,0 +1,51 @@
+// Portfolio Coffee Mate — Prisma Schema (Prisma 7+)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Subscriber {
+  id                String           @id @default(cuid())
+  email             String           @unique
+  createdAt         DateTime         @default(now())
+  isActive          Boolean          @default(true)
+  timezone          String           @default("America/Chicago")
+  sendTime          String           @default("08:00")
+  wantsUrgentAlerts Boolean          @default(true)
+  holdings          Holding[]
+  deliveryLogs      DeliveryLog[]
+  unsubscribeToken  UnsubscribeToken?
+}
+
+model Holding {
+  id           String     @id @default(cuid())
+  subscriberId String
+  ticker       String
+  weightPct    Float?
+  createdAt    DateTime   @default(now())
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, ticker])
+}
+
+model DeliveryLog {
+  id           String     @id @default(cuid())
+  subscriberId String
+  type         String     // DAILY | URGENT
+  sentAt       DateTime   @default(now())
+  status       String     // sent | failed
+  errorMessage String?
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+}
+
+model UnsubscribeToken {
+  id           String     @id @default(cuid())
+  subscriberId String     @unique
+  token        String     @unique @default(cuid())
+  createdAt    DateTime   @default(now())
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+}

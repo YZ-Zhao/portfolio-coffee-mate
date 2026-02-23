@@ -1,0 +1,23 @@
+name: Daily Portfolio Digest
+
+on:
+  schedule:
+    # Runs at 8:00 AM UTC daily (adjust to your preferred time)
+    - cron: "0 8 * * *"
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger daily digest via cron endpoint
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -X POST "$APP_URL/api/cron" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            --fail \
+            --silent \
+            --show-error
