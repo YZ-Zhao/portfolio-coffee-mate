@@ -59,10 +59,10 @@ export async function runDailyDigest(): Promise<{
     stats.processed++;
 
     try {
-      const tickers = subscriber.holdings.map((h) => h.ticker);
+      const tickers = subscriber.holdings.map((h: { ticker: string }) => h.ticker);
       const news = await fetchNews(tickers);
 
-      const holdings: Holding[] = subscriber.holdings.map((h) => ({
+      const holdings: Holding[] = subscriber.holdings.map((h: { ticker: string; weightPct: number | null }) => ({
         ticker: h.ticker,
         weightPct: h.weightPct,
       }));
